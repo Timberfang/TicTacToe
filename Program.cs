@@ -8,11 +8,8 @@
             const int GameBoardRows = 3;
             const int GameBoardCols = 3;
 
-            Grid GameBoard = new(GameBoardRows, GameBoardCols, ' ');
-
-            // Display grid
-            Console.WriteLine("Here's the board:");
-            Console.WriteLine(GameBoard.ToString());
+            TicTacToe Game = new(TicTacToePlayer.PlayerX, GameBoardRows, GameBoardCols);
+            // Game.Start();
         }
 
         public class Grid
@@ -63,5 +60,49 @@
                 this.GridCells[row, col] = value;
             }
         }
+
+        public class TicTacToe
+        {
+            private TicTacToePlayer Player;
+            private Grid Board;
+            private int Rounds;
+
+            public TicTacToe(TicTacToePlayer player, int rows, int cols, int rounds = 1)
+            {
+                this.Player = player;
+                this.Board = new Grid(rows, cols, ' ');
+                this.Rounds = rounds;
+            }
+
+            private void DisplayBoard()
+            {
+                // Display grid
+                Console.WriteLine("Here's the board:");
+                Console.WriteLine(Board.ToString());
+            }
+
+            private void PlayerInput()
+            {
+                Console.Clear();
+                DisplayBoard();
+
+                char CurrentPlayer = Player switch
+                {
+                    TicTacToePlayer.PlayerX => 'X',
+                    TicTacToePlayer.PlayerO => 'O',
+                    _ => ' '
+                };
+                Console.WriteLine($"Player {CurrentPlayer}, it is your turn.");
+                Console.Write("Enter your move as X and Y coordinates. (e.g. '1,1' is the upper-left corner): ");
+                string[] PlayerInput = Console.ReadLine().Split(','); // TODO: Implement error-handling for this
+
+                // Subtract 1 to convert human-readable numbers to array-equivalents
+                Board.SetValue(int.Parse(PlayerInput[0]) - 1, int.Parse(PlayerInput[1]) - 1, CurrentPlayer);
+
+                DisplayBoard();
+            }
+        }
+        
+        public enum TicTacToePlayer { PlayerX, PlayerO }
     }
 }
