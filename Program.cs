@@ -41,8 +41,6 @@
             {
                 string output = string.Empty;
 
-                // output = "temp, please remove";
-
                 for (int y = 0; y < this.Cols; y++)
                 {
                     if (y > 0) { output += Environment.NewLine; }
@@ -65,7 +63,5 @@
                 this.GridCells[row, col] = value;
             }
         }
-
-        enum TicTacToePlayer { PlayerX, PlayerO, Empty }
     }
 }
