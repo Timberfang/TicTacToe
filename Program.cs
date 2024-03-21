@@ -8,44 +8,61 @@
             const int GameBoardRows = 3;
             const int GameBoardCols = 3;
 
+            Grid GameBoard = new(GameBoardRows, GameBoardCols, ' ');
+
+            // Display grid
             Console.WriteLine("Here's the board:");
+            Console.WriteLine(GameBoard.ToString());
+        }
 
-            TicTacToePlayer[,] GameBoard = new TicTacToePlayer[GameBoardRows, GameBoardCols];
+        public class Grid
+        {
+            private readonly int Rows;
+            private readonly int Cols;
+            private readonly char[,] GridCells;
 
-            // Move top to bottom, left to right, filling array with empty spaces.
-            for (int y = 0; y < GameBoardCols; y++)
+            public Grid(int rows, int cols, char fillValue)
             {
-                for (int x = 0; x < GameBoardRows; x++)
+                this.Rows = rows;
+                this.Cols = cols;
+                this.GridCells = new char[rows, cols];
+
+                // Move top to bottom, left to right, filling array with empty spaces.
+                for (int y = 0; y < this.Cols; y++)
                 {
-                    GameBoard[x, y] = TicTacToePlayer.Empty;
+                    for (int x = 0; x < this.Rows; x++)
+                    {
+                        this.GridCells[x, y] = fillValue;
+                    }
                 }
             }
-            
-            // Display grid
-            for (int y = 0;y < GameBoardCols; y++)
-            {
-                if (y > 0) { Console.WriteLine(); }
-                for (int x = 0;x < GameBoardRows; x++)
-                {
-                    char CellContents;
-                    switch (GameBoard[x, y])
-                    {
-                        case TicTacToePlayer.PlayerX:
-                            CellContents = 'X';
-                            break;
-                        case TicTacToePlayer.PlayerO:
-                            CellContents = 'O';
-                            break;
-                        case TicTacToePlayer.Empty:
-                            CellContents = ' ';
-                            break;
-                        default:
-                            CellContents = ' ';
-                            break;
 
+            public override string ToString()
+            {
+                string output = string.Empty;
+
+                // output = "temp, please remove";
+
+                for (int y = 0; y < this.Cols; y++)
+                {
+                    if (y > 0) { output += Environment.NewLine; }
+                    for (int x = 0; x < this.Rows; x++)
+                    {
+                        output += $"[{this.GridCells[x, y]}] ";
                     }
-                    Console.Write("[{0}] ", CellContents);
                 }
+
+                return output;
+            }
+
+            public char GetValue(int row, int col)
+            {
+                return this.GridCells[row, col];
+            }
+
+            public void SetValue(int row, int col, char value)
+            {
+                this.GridCells[row, col] = value;
             }
         }
 
