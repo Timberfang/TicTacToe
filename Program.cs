@@ -63,9 +63,9 @@
 
         public class TicTacToe
         {
-            private TicTacToePlayer Player;
-            private Grid Board;
-            private int Rounds;
+            private readonly TicTacToePlayer Player;
+            private readonly Grid Board;
+            private readonly int Rounds;
 
             public TicTacToe(TicTacToePlayer player, int rows, int cols, int rounds = 1)
             {
