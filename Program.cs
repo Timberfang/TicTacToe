@@ -38,10 +38,10 @@
             {
                 string output = string.Empty;
 
-                for (int y = 0; y < this.Cols; y++)
+				for (int x = 0; x < this.Cols; x++)
                 {
-                    if (y > 0) { output += Environment.NewLine; }
-                    for (int x = 0; x < this.Rows; x++)
+					if (x > 0) { output += Environment.NewLine; }
+					for (int y = 0; y < this.Rows; y++)
                     {
                         output += $"[{this.GridCells[x, y]}] ";
                     }
