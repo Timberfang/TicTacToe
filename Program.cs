@@ -7,28 +7,28 @@ namespace TicTacToe
 	{
 		private static void Main(string[] args)
 		{
-			TicTacToe Game = new();
-			Game.Start();
+			TicTacToe game = new();
+			game.Start();
 		}
 
 		private class Grid
 		{
-			private readonly int Rows;
-			private readonly int Cols;
-			private readonly char[,] GridCells;
+			private readonly int _rows;
+			private readonly int _cols;
+			private readonly char[,] _gridCells;
 
 			public Grid(int rows, int cols, char fillValue)
 			{
-				this.Rows = rows;
-				this.Cols = cols;
-				this.GridCells = new char[rows, cols];
+				this._rows = rows;
+				this._cols = cols;
+				this._gridCells = new char[rows, cols];
 
 				// Move top to bottom, left to right, filling array with empty spaces.
-				for (int y = 0; y < this.Cols; y++)
+				for (int y = 0; y < this._cols; y++)
 				{
-					for (int x = 0; x < this.Rows; x++)
+					for (int x = 0; x < this._rows; x++)
 					{
-						this.GridCells[x, y] = fillValue;
+						this._gridCells[x, y] = fillValue;
 					}
 				}
 			}
@@ -37,12 +37,12 @@ namespace TicTacToe
 			{
 				string output = string.Empty;
 
-				for (int x = 0; x < this.Cols; x++)
+				for (int x = 0; x < this._cols; x++)
 				{
 					if (x > 0) { output += Environment.NewLine; }
-					for (int y = 0; y < this.Rows; y++)
+					for (int y = 0; y < this._rows; y++)
 					{
-						output += $"[{this.GridCells[x, y]}] ";
+						output += $"[{this._gridCells[x, y]}] ";
 					}
 				}
 
@@ -51,56 +51,56 @@ namespace TicTacToe
 
 			public char GetValue(int row, int col)
 			{
-				return this.GridCells[row, col];
+				return this._gridCells[row, col];
 			}
 
 			public char[] GetValues()
 			{
-				char[] output = new char[GridCells.Length];
-                Buffer.BlockCopy(GridCells, 0, output, 0, GridCells.Length * sizeof(char));
+				char[] output = new char[_gridCells.Length];
+                Buffer.BlockCopy(_gridCells, 0, output, 0, _gridCells.Length * sizeof(char));
                 return output;
 			}
 
 			public void SetValue(int row, int col, char value)
 			{
-				this.GridCells[row, col] = value;
+				this._gridCells[row, col] = value;
 			}
 		}
 
 		private partial class TicTacToe
 		{
-			private TicTacToePlayer Player = TicTacToePlayer.PlayerX;
-			private readonly Grid Board = new(3, 3, ' ');
-			private int Rounds = 1;
-			private GameState GameStatus = GameState.Ongoing;
+			private TicTacToePlayer _player = TicTacToePlayer.PlayerX;
+			private readonly Grid _board = new(3, 3, ' ');
+			private int _rounds = 1;
+			private GameState _gameStatus = GameState.Ongoing;
 
 			public void Start()
 			{
-				while (GameStatus == GameState.Ongoing)
+				while (_gameStatus == GameState.Ongoing)
 				{
 					DisplayBoard();
 					PlayerInput();
-					if (Rounds >= 3) { UpdateGameStatus(); }
-					switch (GameStatus)
+					if (_rounds >= 3) { UpdateGameStatus(); }
+					switch (_gameStatus)
 					{
 						case GameState.Ongoing:
-                            Player = Player == TicTacToePlayer.PlayerX ? TicTacToePlayer.PlayerO : TicTacToePlayer.PlayerX;
-							Rounds++;
+                            _player = _player == TicTacToePlayer.PlayerX ? TicTacToePlayer.PlayerO : TicTacToePlayer.PlayerX;
+							_rounds++;
 							break;
 						case GameState.Win:
-							string PlayerName = Player switch
+							string playerName = _player switch
 							{
 								TicTacToePlayer.PlayerX => "Player X",
 								TicTacToePlayer.PlayerO => "Player O",
-								_ => throw new ArgumentOutOfRangeException($"Unrecognized player {Player}")
+								_ => throw new ArgumentOutOfRangeException($"Unrecognized player {_player}")
 							};
-							Console.WriteLine($"Congratulations, '{PlayerName}' won!");
+							Console.WriteLine($"Congratulations, '{playerName}' won!");
 							break;
 						case GameState.Draw:
 							Console.WriteLine("No one won, this game is a draw!");
 							break;
 						default:
-							throw new ArgumentOutOfRangeException($"Unrecognized game state '{GameStatus}'");
+							throw new ArgumentOutOfRangeException($"Unrecognized game state '{_gameStatus}'");
                     }
 				}
 			}
@@ -110,43 +110,43 @@ namespace TicTacToe
 				// Display grid
 				Console.Clear();
 				Console.WriteLine("Here's the board:");
-				Console.WriteLine(Board.ToString());
+				Console.WriteLine(_board.ToString());
 			}
 
 			private void PlayerInput()
 			{
-				char CurrentPlayer = Player switch
+				char currentPlayer = _player switch
 				{
 					TicTacToePlayer.PlayerX => 'X',
 					TicTacToePlayer.PlayerO => 'O',
 					_ => ' '
 				};
-				Console.WriteLine($"Player {CurrentPlayer}, it is your turn.");
+				Console.WriteLine($"Player {currentPlayer}, it is your turn.");
 				Console.Write("Enter your move as X and Y coordinates. (e.g. '1,1' is the upper-left corner): ");
-                string PlayerInput =
+                string playerInput =
 	                AnsiConsole.Prompt(
 						new TextPrompt<string>("Enter your move as X and Y coordinates. (e.g. '1,1' is the upper-left corner)")
 							.Validate(ValidateInput));
 
                 // Subtract 1 to convert human-readable numbers to array-equivalents
-				var CleanedInput = CleanInput(PlayerInput);
-                Board.SetValue(CleanedInput.Item1 - 1, CleanedInput.Item2 - 1, CurrentPlayer);
+				var cleanedInput = CleanInput(playerInput);
+                _board.SetValue(cleanedInput.Item1 - 1, cleanedInput.Item2 - 1, currentPlayer);
                 DisplayBoard();
             }
 
 			private void UpdateGameStatus()
 			{
-				char[] CheckedChars = new char[3];
+				char[] checkedChars = new char[3];
 
 				// Columns
 				for (int y = 0; y < 3; y++)
 				{
 					for (int x = 0; x < 3; x++)
 					{
-						CheckedChars[x] = Board.GetValue(x, y);
-						if (CheckedChars.All(c => c.Equals(CheckedChars[0]) && !c.Equals(' '))) { GameStatus = GameState.Win; break; }
+						checkedChars[x] = _board.GetValue(x, y);
+						if (checkedChars.All(c => c.Equals(checkedChars[0]) && !c.Equals(' '))) { _gameStatus = GameState.Win; break; }
 					}
-                    Array.Clear(CheckedChars, 0, CheckedChars.Length);
+                    Array.Clear(checkedChars, 0, checkedChars.Length);
                 }
 
 				// Rows
@@ -155,26 +155,26 @@ namespace TicTacToe
 					for (int y = 0; y < 3; y++)
 					{
 						// CheckedChars[x] = Board.GetValue(x, y);
-						CheckedChars[y] = Board.GetValue(x, y);
-						if (!CheckedChars.All(c => c.Equals(CheckedChars[0]) && !c.Equals(' '))) { continue; }
-						GameStatus = GameState.Win; break;
+						checkedChars[y] = _board.GetValue(x, y);
+						if (!checkedChars.All(c => c.Equals(checkedChars[0]) && !c.Equals(' '))) { continue; }
+						_gameStatus = GameState.Win; break;
 					}
-                    Array.Clear(CheckedChars, 0, CheckedChars.Length);
+                    Array.Clear(checkedChars, 0, checkedChars.Length);
                 }
                 // Top-left to bottom-right
-                CheckedChars[0] = Board.GetValue(0, 0);
-				CheckedChars[1] = Board.GetValue(1, 1);
-				CheckedChars[2] = Board.GetValue(2, 2);
-				if (CheckedChars.All(c => c.Equals(CheckedChars[0]) && !c.Equals(' '))) { GameStatus = GameState.Win; }
-                Array.Clear(CheckedChars, 0, CheckedChars.Length);
+                checkedChars[0] = _board.GetValue(0, 0);
+				checkedChars[1] = _board.GetValue(1, 1);
+				checkedChars[2] = _board.GetValue(2, 2);
+				if (checkedChars.All(c => c.Equals(checkedChars[0]) && !c.Equals(' '))) { _gameStatus = GameState.Win; }
+                Array.Clear(checkedChars, 0, checkedChars.Length);
                 // Top-right to bottom-left
-                CheckedChars[0] = Board.GetValue(0, 2);
-				CheckedChars[1] = Board.GetValue(1, 1);
-				CheckedChars[2] = Board.GetValue(2, 0);
-				if (CheckedChars.All(c => c.Equals(CheckedChars[0]) && !c.Equals(' '))) { GameStatus = GameState.Win; }
-                Array.Clear(CheckedChars, 0, CheckedChars.Length);
+                checkedChars[0] = _board.GetValue(0, 2);
+				checkedChars[1] = _board.GetValue(1, 1);
+				checkedChars[2] = _board.GetValue(2, 0);
+				if (checkedChars.All(c => c.Equals(checkedChars[0]) && !c.Equals(' '))) { _gameStatus = GameState.Win; }
+                Array.Clear(checkedChars, 0, checkedChars.Length);
 
-                if (!Board.GetValues().Contains(' ') && GameStatus != GameState.Win) { GameStatus = GameState.Draw; }
+                if (!_board.GetValues().Contains(' ') && _gameStatus != GameState.Win) { _gameStatus = GameState.Draw; }
 			}
 
 			private bool ValidateInput(string input)
@@ -183,7 +183,7 @@ namespace TicTacToe
 				string[] inputs = input.Split(',');
 				int x = int.Parse(inputs[0]);
 				int y = int.Parse(inputs[1]);
-				return Board.GetValue(x - 1, y - 1) == ' ';
+				return _board.GetValue(x - 1, y - 1) == ' ';
 			}
 
 			private (int, int) CleanInput(string input)
