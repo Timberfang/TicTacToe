@@ -3,9 +3,9 @@ using Spectre.Console;
 
 namespace TicTacToe
 {
-	internal partial class Program
+	internal static partial class Program
 	{
-		private static void Main(string[] args)
+		private static void Main()
 		{
 			TicTacToe game = new();
 			game.Start();
@@ -19,16 +19,16 @@ namespace TicTacToe
 
 			public Grid(int rows, int cols, char fillValue)
 			{
-				this._rows = rows;
-				this._cols = cols;
-				this._gridCells = new char[rows, cols];
+				_rows = rows;
+				_cols = cols;
+				_gridCells = new char[rows, cols];
 
 				// Move top to bottom, left to right, filling array with empty spaces.
-				for (int y = 0; y < this._cols; y++)
+				for (int y = 0; y < _cols; y++)
 				{
-					for (int x = 0; x < this._rows; x++)
+					for (int x = 0; x < _rows; x++)
 					{
-						this._gridCells[x, y] = fillValue;
+						_gridCells[x, y] = fillValue;
 					}
 				}
 			}
@@ -37,12 +37,12 @@ namespace TicTacToe
 			{
 				string output = string.Empty;
 
-				for (int x = 0; x < this._cols; x++)
+				for (int x = 0; x < _cols; x++)
 				{
 					if (x > 0) { output += Environment.NewLine; }
-					for (int y = 0; y < this._rows; y++)
+					for (int y = 0; y < _rows; y++)
 					{
-						output += $"[{this._gridCells[x, y]}] ";
+						output += $"[{_gridCells[x, y]}] ";
 					}
 				}
 
@@ -51,7 +51,7 @@ namespace TicTacToe
 
 			public char GetValue(int row, int col)
 			{
-				return this._gridCells[row, col];
+				return _gridCells[row, col];
 			}
 
 			public char[] GetValues()
@@ -63,7 +63,7 @@ namespace TicTacToe
 
 			public void SetValue(int row, int col, char value)
 			{
-				this._gridCells[row, col] = value;
+				_gridCells[row, col] = value;
 			}
 		}
 
@@ -144,7 +144,8 @@ namespace TicTacToe
 					for (int x = 0; x < 3; x++)
 					{
 						checkedChars[x] = _board.GetValue(x, y);
-						if (checkedChars.All(c => c.Equals(checkedChars[0]) && !c.Equals(' '))) { _gameStatus = GameState.Win; break; }
+						if (!checkedChars.All(c => c.Equals(checkedChars[0]) && !c.Equals(' '))) { continue; } 
+						_gameStatus = GameState.Win; break;
 					}
                     Array.Clear(checkedChars, 0, checkedChars.Length);
                 }
@@ -186,7 +187,7 @@ namespace TicTacToe
 				return _board.GetValue(x - 1, y - 1) == ' ';
 			}
 
-			private (int, int) CleanInput(string input)
+			private static (int, int) CleanInput(string input)
 			{
 				int[] output = CleaningPattern().Replace(input, " ").Split(',').Select(int.Parse).ToArray();
 				if (output.Length != 2) { throw new ArgumentOutOfRangeException(nameof(input)); }
